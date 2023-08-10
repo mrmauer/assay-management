@@ -20,3 +20,5 @@ class Config:
 
     MIN_ANTIBODY = 20
     MAX_ANTIBODY = 40
+
+    PLATE_PAGE_SIZE = 20

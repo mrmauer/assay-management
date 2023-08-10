@@ -4,7 +4,7 @@ from app.models import Session, Plate, Well
 from app.config import Config
 from app.helpers import checks_reqs, check_optionals, validate_reagent, \
                         validate_antibody
-from sqlalchemy import update
+from sqlalchemy import update, select
 from uuid import uuid4
 import time
 
@@ -170,3 +170,43 @@ def delete_plate(plate_id: str):
 
     return {}, 200
 
+@app.get('/plate/<string:plate_id>')
+def get_plate(plate_id: str):
+
+    with Session() as session:
+        plate = session.get(Plate, plate_id)
+
+    if not plate or plate.deleted:
+        return {
+            "message": f"Plate {plate_id} does not exist."
+        }, 404
+
+    with Session() as session:
+        stmt = (
+            select(Well)
+            .where(Well.plate_id == plate.plate_id)
+        )
+        wells = session.execute(stmt).all()
+
+    return {
+        **plate.json(),
+        "wells": [w[0].json() for w in wells]
+    }, 200
+
+@app.get('/plates')
+def get_plates(page: int=1):
+
+    with Session() as session:
+        stmt = (
+            select(Plate)
+            .where(Plate.deleted == False)
+            .limit(Config.PLATE_PAGE_SIZE)
+            .offset((page-1) * Config.PLATE_PAGE_SIZE)
+        )
+        plates = session.execute(stmt).all()
+
+    print(f"test plates: {plates}")
+
+    return {
+        "plates": [p[0].json() for p in plates]
+    }, 200

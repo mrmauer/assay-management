@@ -26,7 +26,15 @@ class Plate(Base):
     )
 
     def __repr__(self) -> str:
-        return f"Plate(plate_id={self.id}, n_wells={self.n_wells})"
+        return f"Plate(plate_id={self.plate_id}, n_wells={self.n_wells})"
+
+    def json(self) -> dict:
+        return {
+            "plate_id": self.plate_id,
+            "description": self.description,
+            "n_wells": self.n_wells,
+            "created_dt": self.created_dt,
+        }
 
 class Well(Base):
     __tablename__ = "wells"
@@ -45,6 +53,15 @@ class Well(Base):
 
     def __repr__(self) -> str:
         return f"Well(well_id={self.well_id}, plate_id={self.plate_id})"
+
+    def json(self) -> dict:
+        return {
+            "well_id": self.well_id,
+            "plate_id": self.plate_id,
+            "reagent": self.reagent,
+            "antibody": self.antibody,
+            "concentration": self.concentration,
+        }
 
 engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True)
 Session = scoped_session(sessionmaker(engine))
