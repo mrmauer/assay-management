@@ -33,3 +33,16 @@ def validate_antibody(antibody: str) -> bool:
         return False
 
     return True
+
+def validate_concentration(data: dict) -> bool:
+    if data.get("antibody"):
+        if data.get("concentration"):
+            try:
+                data["concentration"] = float(data.get("concentration"))
+                return True
+            except Exception:
+                return False
+        else:
+            return True
+    else:
+        return not bool(data.get("concentration"))
