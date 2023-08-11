@@ -43,7 +43,7 @@ def create_plate():
         session.add(new_plate)
         session.commit()
 
-    return {"plate_id": plate_id}, 200
+    return {"plate_id": plate_id}, 201
 
 @app.put('/plate/<string:plate_id>/well/<int:well_id>')
 def edit_well(plate_id: str, well_id: int):
